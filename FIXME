@@ -1,0 +1,4 @@
+Items that need addressed:
+
+1. Running server through docker starts app on `localhost` but issues 404 error when attempting to access files past main "webmorph" folder located in "/var/www/html"
+    - This issue is likely due to apache permissions (see `Dockerfile` lines 88-98), but I can't figure out where it is getting hung up
