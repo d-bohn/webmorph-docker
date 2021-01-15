@@ -1,0 +1,42 @@
+FROM mdelapenya/tomcat-mysql:7.0.77
+COPY assets/webmorph.war /opt/apache-tomcat-7.0.77/webapps/webmoprh.war
+
+LABEL maintainer="Daniel Albohn <d.albohn@gmail.com>"
+
+# Install LAMP
+
+# RUN mkdir -p /usr/share/man/man1 && \
+#     apt-get update && \
+#     apt-get -y install -qq -y \
+#     git wget sudo \
+#     php7.2 php7.2-cli \
+#     php7.2-common php7.2-json \
+#     php7.2-opcache php7.2-mysql \
+#     php7.2-zip php7.2-fpm \
+#     php7.2-mbstring
+
+# Follow directions from webmorph github
+
+RUN echo '127.0.0.1 webmorph.test' >> /etc/hosts
+
+# RUN service apache2 start
+
+ADD ./assets/000-default.conf /etc/apache2/sites-available/000-default.conf
+
+RUN mkdir -p /private/var/log/apache2 && \
+    chmod 777 /private/var/log/apache2 && \
+    touch /private/var/log/apache2/webmorph-error_log && \
+    touch /private/var/log/apache2/webmorph-access_log
+
+ADD ./assets/psychomorph_sql_setup.sql /opt/assets/psychomorph_sql_setup.sql
+# RUN chown -R mysql:mysql /var/lib/mysql && \
+#     /etc/init.d/mysql start && \
+#     mysql -u root < /opt/assets/psychomorph_sql_setup.sql
+
+RUN ln -s //opt/apache-tomcat-7.0.77 /usr/local/tomcat && \
+    chmod +x /usr/local/tomcat/bin/*.sh
+
+ENV IMAGE_FOLDER="/opt/assets/webmorph_images"
+
+RUN mkdir $IMAGE_FOLDER && \
+    chmod 777 $IMAGE_FOLDER
